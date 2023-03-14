@@ -1,7 +1,7 @@
 import numpy as np
 from os import path,system
 
-from fitted_LFF import g_plus_new
+from fitted_LFF import g_plus_new, g_plus_dlda
 from PW92 import ec_pw92
 from g_corradini import g_corradini
 from ra_lff import g_plus_ra
@@ -190,7 +190,7 @@ def ec_freq_integrand(u,x,lam,rs,fxc='RPA'):
     elif fxc == 'rMCP07':
         gplus = g_rMCP07(qscl,u*(kf/lam)**2,dv)
     elif fxc == 'NEWD':
-        gplus = GKI_im_freq(u*(kf/lam)**2,dv)*g_plus_new(qscl,rs_scl)/GKI_im_freq(0.,dv)
+        gplus = g_plus_dlda(qscl,u*(kf/lam)**2,rs_scl)
     elif fxc == 'PADE':
         gplus = pade_g_plus(qscl,rs_scl)
 
@@ -326,7 +326,7 @@ def plots(gpl):
         'RAS': 'darkred', 'RAD': 'darkred', 'rMCP07': 'tab:orange', 'PADE': 'teal',  'NEWD': 'cyan'}
 
     style_d = {'RPA': '--', 'NEW': '-', 'COR': '-.',
-        'RAS': '--', 'RAD': ':', 'rMCP07': '-', 'PADE': '--'}
+        'RAS': '--', 'RAD': ':', 'rMCP07': '-', 'PADE': '--', 'NEWD': '-'}
 
     lim_d = {'NEW': 33. , 'RAS': 38., 'RAD': 38.}
 

@@ -25,15 +25,12 @@ def simple_LFF(q,rs,c,var):
         CA, CB, CC = get_g_minus_pars(rs,0.)
 
     alpha = c[0] + c[1]*np.exp(-abs(c[2])*rs)
-    beta = c[3]
-    gamma = c[4]
 
-    interp1 = ifunc(q4/16.,beta,gamma)
-    interp2 = 1. - interp1
+    interp1 = ifunc(q4/16.,c[3],c[4])
 
     asymp1 = q2*(CA + alpha*q4)
     asymp2 = CB + CC*q2
-    LFF = asymp1*interp1 + asymp2*interp2
+    LFF = asymp1*interp1 + asymp2*(1. - interp1)
 
     return LFF
 
@@ -44,6 +41,38 @@ def g_plus_new(q,rs):
 def g_minus_new(q,rs):
     cms = [-0.00105483, 0.0157086, 0.345319, 2.850094, 0.935840]
     return simple_LFF(q,rs,cms,'-')
+
+def g_plus_dlda(q,u,rs):
+    from alda import lda_derivs
+    CA, _, _ = get_g_plus_pars(rs)
+
+    kf = rs_to_kf/rs
+    x2 = (q/kf)**2
+
+    gp_inf_x = 3./20.
+    dv = {'rs': rs, 'rsh': rs**(0.5), 'kF': kf, 'n': 3./(4.*pi*rs**3)}
+    eps_c,d_eps_c_d_rs = lda_derivs(dv,param='PW92')
+    gp_inf_c = pi*(22.0*eps_c + 26.0*rs*d_eps_c_d_rs)/(20.*kf)
+    gp_inf = gp_inf_x + gp_inf_c
+
+    wp = (3./rs**3)**(0.5)
+    v = (u/(2.*wp))**2
+    intp = ifunc(v,3.,1.)
+
+    enh = CA*intp + gp_inf*(1. - intp)
+
+    return enh*x2
+
+def gplus_dyn(q,u,rs):
+
+    kf = rs_to_kf/rs
+    x2 = (q/kf)**2
+    gp_w = g_plus_dlda(q,u,rs)
+    gp_q = g_plus_new(q,rs)
+    CA, CB, _ = get_g_plus_pars(rs)
+    itp = np.exp(-CA*x2/CB)
+    gp = (1. + itp*(gp_w/(CA*x2) - 1.))*gp_q
+    return gp
 
 def gplus_plots():
 
@@ -148,7 +177,13 @@ def gplus_plots():
         ax[0].set_ylabel('$G_+(q)$',fontsize=12)
         ax[1].set_ylabel('$4\\pi \\, G_+(q) (k_\\mathrm{F}/q)^2$',fontsize=12)
 
-        if rs <= 10.:
+        if abs(rs - 0.1) < 1.e-15:
+            ymax0 = 1.1*max(gpapp.max(),gp_ra.max())
+            ymax1 = 5.
+        elif abs(rs - 100.) < 1.e-15:
+            ymax0 = 1.1*gpapp.max()
+            ymax1 = 5.6
+        elif rs <= 10.:
             ymax0 = 1.1*max(gpapp.max(),gp_ra.max())
             ymax1 = 1.1*max(gpapp_oq2.max(),gp_ra_oq2.max())
         else:
@@ -164,9 +199,9 @@ def gplus_plots():
         elif rs in [0.1]:
             ileg = 1
             tcoord = (0.9,0.9)
-        elif rs in [100]:
-            ileg = 1
-            tcoord = (0.9, 0.02)
+        #elif rs in [100]:
+        #    ileg = 1
+        #    tcoord = (0.9, 0.05)
         else:
             ileg = 1
             tcoord = (0.9,0.05)
@@ -267,7 +302,7 @@ def gminus_plots():
 
         #ax[0].legend(fontsize=10,title='$r_\\mathrm{s}'+'={:}$'.format(rs),\
         #    title_fontsize=18,ncol = 4,loc=(0.5,1.01))
-        if rs in [1,2,100]:
+        if rs in [1,100]:
             ileg = 0
             tcoord = (0.01,0.05)
         else:

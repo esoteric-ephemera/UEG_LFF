@@ -31,7 +31,7 @@ def get_lambdas(rs):
 
     # just below Eq. 39
     g0 = g0_unp_pw92_pade(rs)
-    lam_a_inf = -(1. - 2*g0)/3.
+    lam_a_inf = (2*g0 - 1.)/3.
 
     return lam_s_0, lam_s_inf, lam_n_0, lam_n_inf, lam_a_0, lam_a_inf
 
@@ -50,7 +50,12 @@ def lff_ra_symm(q,w,rs):
     omg0 = 1. - g0
 
     lam_s_0, lam_s_inf, _, _, _, _ = get_lambdas(rs)
-    gam_s = 9/16*omg0*lam_s_inf + (1. + 3*(1.-1./alp))/4.
+    """
+        p. 57 of RA work: per Phys Rev style (https://journals.aps.org/prl/authors):
+            "Note that the solidus (/) in fractions, for example 1/2a, means 1/(2a) and not (1/2)a."
+        which to me implies that what is meant is 9/(16*[1 - g(0)]) and not 9[1-g(0)]/16.
+    """
+    gam_s = 9*lam_s_inf/(16*omg0) + (4.*alp - 3.)/(4.*alp)
 
     # Eq. 56
     a_s = lam_s_inf + (lam_s_0 - lam_s_inf)/(1. + (gam_s*w)**2)
@@ -90,9 +95,9 @@ def lff_ra_occ(q,w,rs):
     gam_n, since this is constant. That seems to give OK agreement with their figure
     """
     c_n = 3*gam_n/(1.18*opgnw) - ( (lam_n_0 + lam_n_inf/3)/(lam_n_0 + 2*lam_n_inf/3) \
-        + 3*gam_n/(1.18*opgnw))/(1 + gnw2)
+        + 3*gam_n/(1.18*opgnw))/(1. + gnw2)
     # Eq. 63
-    bt = a_n + lam_n_inf*(1 + 2/3*c_n*opgnw)
+    bt = a_n + lam_n_inf*(1. + 2/3*c_n*opgnw)
     b_n = -3/(2*lam_n_inf*opgnw**2)*( bt + (bt**2 + 4/3*a_n*lam_n_inf)**(0.5) )
 
     q2 = q**2
@@ -143,8 +148,6 @@ def g_minus_ra(q,w,rs):
     """
         NB: q = (wavevector in a.u.)/(2*kf), w = (frequency in a.u.)/(2*kf**2)
 
-        lff_ra_symm and lff_ra_occ return G/q**2
-
         C.F. Richardson and N.W. Ashcroft,
             Phys. Rev. B 50, 8170 (1994),
 
@@ -163,8 +166,6 @@ def g_minus_ra(q,w,rs):
 def g_plus_ra(q,w,rs):
     """
         NB: q = (wavevector in a.u.)/(2*kf), w = (frequency in a.u.)/(2*kf**2)
-
-        lff_ra_symm and lff_ra_occ return G/q**2
 
         C.F. Richardson and N.W. Ashcroft,
             Phys. Rev. B 50, 8170 (1994),
@@ -188,7 +189,7 @@ if __name__ == "__main__":
 
     rs = 2.0
 
-    kf = (9*pi/4)**(1/3)/rs
+    kf = (9.*pi/4.)**(1./3.)/rs
     ql = np.linspace(0.0,4.0,2000)
     tfac = ql**2
     """
@@ -200,10 +201,10 @@ if __name__ == "__main__":
     exit()
     """
     lsls = ['-','--']
-    for iw,w in enumerate([0.]):#[0.5, 2]):
-        gs = lff_ra_symm(ql,w,rs)
-        gn = lff_ra_occ(ql,w,rs)
-        ga = lff_ra_asymm(ql,w,rs)
+    for iw,w in enumerate([2.]):#[0.5, 2]):
+        gs = lff_ra_symm(ql,w/(2.*kf**2),rs)
+        gn = lff_ra_occ(ql,w/(2.*kf**2),rs)
+        ga = lff_ra_asymm(ql,w/(2.*kf**2),rs)
         #plt.plot(ql,(gs+gn)*tfac,label="$G_s(q,iw), w= {:}$".format(w),color='darkblue', \
         #    linestyle=lsls[iw])
         plt.plot(ql,gs,label="$G_s(q,iw), w= {:}$".format(w),color='darkblue', \
