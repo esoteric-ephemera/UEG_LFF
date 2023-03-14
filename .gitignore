@@ -10,3 +10,8 @@ lsda_refit.py
 UEG_EOS.py
 UEG_rs_Taylor.pdf
 UEG_spin_Taylor.pdf
+PW92_refit/
+PW92_refit.py
+min_rs.csv
+optfit_plus.py
+plot_grad_corr.py
