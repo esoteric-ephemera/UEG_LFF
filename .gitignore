@@ -4,7 +4,7 @@
 ./azadi_drummond_analysis/
 catpars.py
 comp_LFF.py
-./deprec/*
+deprec/
 ./fit_optpars.nb
 ./lsda_refit.py
 UEG_EOS.py
