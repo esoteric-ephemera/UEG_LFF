@@ -15,3 +15,8 @@ PW92_refit.py
 min_rs.csv
 optfit_plus.py
 plot_grad_corr.py
+new_Gplus_data
+plot_new_Gplus.py
+**/*.nb
+data_files/LFFs_rs_*.csv
+data_files/LFF_summary.xlsx

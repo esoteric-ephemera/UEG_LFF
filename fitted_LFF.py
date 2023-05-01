@@ -7,7 +7,7 @@ from asymptotics import get_g_minus_pars, get_g_plus_pars
 pi = np.pi
 rs_to_kf = (9*pi/4.)**(1./3.)
 
-def ifunc(x,a,b):
+def smooth_step(x,a,b):
     f1 = np.exp(a*b)
     f2 = np.exp(-a*x)
     f = (f1 - 1.)*f2/(1. + (f1 - 2.)*f2)
@@ -26,7 +26,7 @@ def simple_LFF(q,rs,c,var):
 
     alpha = c[0] + c[1]*np.exp(-abs(c[2])*rs)
 
-    interp1 = ifunc(q4/16.,c[3],c[4])
+    interp1 = smooth_step(q4/16.,c[3],c[4])
 
     asymp1 = q2*(CA + alpha*q4)
     asymp2 = CB + CC*q2
@@ -57,7 +57,7 @@ def g_plus_dlda(q,u,rs):
 
     wp = (3./rs**3)**(0.5)
     v = (u/(2.*wp))**2
-    intp = ifunc(v,3.,1.)
+    intp = smooth_step(v,3.,1.)
 
     enh = CA*intp + gp_inf*(1. - intp)
 
