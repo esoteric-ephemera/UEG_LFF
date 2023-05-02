@@ -1,0 +1,23 @@
+[build-system]
+requires = ["hatchling","numpy","matplotlib","scipy"]
+build-backend = "hatchling.build"
+
+[project]
+name = "AKCK_LFF"
+version = "0.0.3"
+authors = [
+  { name="Aaron Kaplan", email="aaron.kaplan.physics@gmail.com" },
+  { name="Carl Kukkonen", email="kukkonen@viaspace.com "},
+]
+description = "Analytic models for the local field factors of the interacting uniform electron gas"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = { file = "LICENSE" }
+
+[project.urls]
+"Homepage" = "https://github.com/esoteric-ephemera/UEG_LFF"
+"Bug Tracker" = "https://github.com/esoteric-ephemera/UEG_LFF/issues"
