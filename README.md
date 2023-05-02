@@ -12,7 +12,7 @@ Please cite the previously listed paper when using this code or the results of o
 ## Basic use of the fitted LFFs
 
 To use the fitted LFFs in Python code, type
-*from fitted_LFF import g_plus_new, g_minus_new*
+*from AKCK_LFF.fitted_LFF import g_plus_new, g_minus_new*
 The arguments of both *g_plus_new* and *g_minus_new* are, in order, the wavevector (units: inverse bohr), and the Wigner-Seitz (WS) radius / *r*<sub>s</sub> (units: bohr).
 
 Both *g_plus_new* and *g_minus_new* are wrappers around the parent structure *simple_LFF*.
