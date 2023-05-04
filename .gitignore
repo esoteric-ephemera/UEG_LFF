@@ -5,3 +5,4 @@ AKCK_LFF/deprec/
 AKCK_LFF/data_files/LFFs_rs_*.csv
 AKCK_LFF/data_files/LFF_summary.xlsx
 dist
+builddist.sh

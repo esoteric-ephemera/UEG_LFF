@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "AKCK_LFF"
-version = "0.0.4"
+version = "0.0.11"
 authors = [
   { name="Aaron Kaplan", email="aaron.kaplan.physics@gmail.com" },
   { name="Carl Kukkonen", email="kukkonen@viaspace.com "},

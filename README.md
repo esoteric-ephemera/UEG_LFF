@@ -37,7 +37,7 @@ Unless specified otherwise, the units used in the following are hartree atomic u
 
 * **ec_data**
 
-  * Files of the form *eps_c_\*.csv** tabulate computed correlation energies (units: hartree, from the adiabatic connection fluctuation dissipation theorem) as a function of the WS radius.
+  * Files of the form *eps_c_\*.csv* tabulate computed correlation energies (units: hartree, from the adiabatic connection fluctuation dissipation theorem) as a function of the WS radius.
   Some keywords are:
       * *COR*: the wavevector-dependent exchange-correlation (xc) kernel of Corradini *et al.* [3]
       * *NEW*: the present wavevector-dependent density LFF, or xc kernel
@@ -81,20 +81,27 @@ Note that function *alda* thus requires a dictionary entry *dv* which takes the 
 Possible optional keywords are *x_only* for exchange only (default: False), and parameterization of the kernel (default: PZ81, PW92 is another possible option).
 
 * *alpha_c_c1.py* recomputes the value of the next-to-leading order term in the high-density expansion of the correlation spin-stiffness, as in Eq. (19).
+To call its functionality, use *from AKCK_LFF.alpha_c_c1 import integrate_funs*, and simply run *integrate_funs()*.
 
 * *asymptotics.py* provides the asymptotic expansion coefficients of *G<sub>+* in *get_g_plus_pars*, which takes only the WS radius as input, and of *G<sub>-* in *get_g_minus_pars*, which takes the WS radius and relative spin polarization as input.
 
-* Running *corr.py* computes the correlation energies of various density LFFs, as plotted in Fig. 2
+* *corr.py* computes the correlation energies of various density LFFs, as plotted in Fig. 2.
+To generate Fig. 2, run *corr_plots()*.
+*corr_plots* takes an optional keyword argument, *gpl* (list).
+To modify which kernels/LFFs are used, use the same keywords as in the **ec_data/eps_c_\*.csv** files, described above.
 
 * *fit_LFF.py* is the main fitting routine used here.
-Running this file requires secondary options, specified as *key*=*value*
-  * *routine*:
+Its usage syntax is *from AKCK_LFF.fit_LFF import fitparser*, *fitparser(routine,manip,rs=None)*.
+Running this file requires secondary options
+  * *routine* (string):
     * *init*: generates initial parameters for select values of the WS radius
     * *manip*: allows the user to manually manipulate the parameters in the LFF
     * *main*: main fitting routine which provides the parameters in the text
-  * *var* is the variant of the LFF, either *+* for *G<sub>+* or *-* for *G<sub>-*.
+  * *var* (string) is the variant of the LFF, either *+* for *G<sub>+* or *-* for *G<sub>-*.
+  * optional keyword argument *rs* (float/int)
 
-* *fit_RPA_cutoffs.py* fits the numeric RPA cutoffs for the correlation energy, as described in the supplemental material
+* *fit_RPA_cutoffs.py* fits the numeric RPA cutoffs for the correlation energy, as described in the supplemental material.
+Run *gen_RPA_cutoffs()* (no arguments).
 
 * *fitted_LFF.py* is described in the **Basic use of the fitted LFFs** section.
 
@@ -107,6 +114,9 @@ This function requires the wavevector (unit: inverse bohr) and a density diction
 This function takes the wavevector and density dictionary as inputs.
 An optional keyword, *param* (default PZ81) can use either the Perdew-Zunger [8] (PZ81) or Perdew-Wang [6] (PW92) parameterization of the UEG correlation energy as input.
 
+* *plot_LFFs.py* generates plots of *G<sub>+* (*gplus_plots*) and *G<sub>-* (*gminus_plots*) shown in the manuscript.
+Neither function takes arguments.
+
 * *rMCP07.py* contains the wavevector- and frequency-dependent density LFF of Kaplan *et al.* [5] in *g_rMCP07*.
 Note that this function ***assumes*** that the frequency is purely imaginary.
 This function takes the wavevector, imaginary part of the frequency (entered as a real number), and density dictionary as input.
@@ -116,9 +126,11 @@ To use their density LFF *G<sub>+*, call *g_plus_ra*; to use their spin LFF *G<s
 Both take the wavevector (units: bohr) and imaginary part of the frequency (units: inverse hartree energy), and WS radius (units: bohr) as inputs.
 ***Both assume that the frequency is purely imaginary.***
 
-* *stiffness_refit.py* refits the correlation spin stiffness using the PW92 framework
+* *stiffness_refit.py* refits the correlation spin stiffness using the PW92 framework.
+To call its functionality, use *fit_alpha_c_new()* (takes no arguments)
 
 * *surf_plots.py* produces the surface plots in the supplemental material.
+Call *surf_plots()* (takes no arguments).
 
 ## References
 

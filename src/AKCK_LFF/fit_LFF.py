@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import least_squares
-from os import path, system, sys
+from os import path, system#, sys
 
 from AKCK_LFF.asymptotics import get_g_plus_pars, get_g_minus_pars
 from AKCK_LFF.ra_lff import g_plus_ra, g_minus_ra
@@ -12,6 +12,8 @@ pi = np.pi
 rs_to_kf = (9*pi/4.)**(1./3.)
 
 vtow = {'+': 'plus', '-': 'minus'}
+
+rdir = path.dirname(path.realpath(__file__)) + '/'
 
 def smooth_step(x,a,b):
     f1 = np.exp(a*b)
@@ -67,7 +69,7 @@ def main_fit(rs_l,ips0,var):
     sgnstr = vtow[var]
 
     for irs, rs in enumerate(rs_l):
-        CKLFF = './data_files/CK_G{:}_rs_{:}.csv'.format(sgnstr,int(rs))
+        CKLFF = rdir + '/data_files/CK_G{:}_rs_{:}.csv'.format(sgnstr,int(rs))
 
         if path.isfile(CKLFF):
             tdat_CK[rs] = np.genfromtxt(CKLFF,delimiter=',',skip_header=1)
@@ -78,7 +80,7 @@ def main_fit(rs_l,ips0,var):
             npts += tdat_CK[rs].shape[0]
 
         if var == '+':
-            mcsgpf = './data_files/MCS_Gplus_rs_{:}.csv'.format(int(rs))
+            mcsgpf = rdir + '/data_files/MCS_Gplus_rs_{:}.csv'.format(int(rs))
             if path.isfile(mcsgpf):
                 tdat_MCS[rs] = np.genfromtxt(mcsgpf,delimiter=',',skip_header=1)
                 if rs in tdat:
@@ -217,7 +219,7 @@ def init_fit(rs_l,var):
     sgnstr = vtow[var]
 
     for irs, rs in enumerate(rs_l):
-        CKLFF = './data_files/CK_G{:}_rs_{:}.csv'.format(sgnstr,int(rs))
+        CKLFF = rdir + '/data_files/CK_G{:}_rs_{:}.csv'.format(sgnstr,int(rs))
 
         if path.isfile(CKLFF):
             tdat_CK[rs] = np.genfromtxt(CKLFF,delimiter=',',skip_header=1)
@@ -228,7 +230,7 @@ def init_fit(rs_l,var):
             npts += tdat_CK[rs].shape[0]
 
         if var == '+':
-            mcsgpf = './data_files/MCS_Gplus_rs_{:}.csv'.format(int(rs))
+            mcsgpf = rdir + '/data_files/MCS_Gplus_rs_{:}.csv'.format(int(rs))
             if path.isfile(mcsgpf):
                 tdat_MCS[rs] = np.genfromtxt(mcsgpf,delimiter=',',skip_header=1)
                 if rs in tdat:
@@ -269,12 +271,12 @@ def manip(rs,var):
     tdat_MCS = {}
 
     sgnstr = vtow[var]
-    CKLFF = './data_files/CK_G{:}_rs_{:}.csv'.format(sgnstr,int(rs))
+    CKLFF = rdir + '/data_files/CK_G{:}_rs_{:}.csv'.format(sgnstr,int(rs))
     if path.isfile(CKLFF):
         tdat_CK[rs] = np.genfromtxt(CKLFF,delimiter=',',skip_header=1)
 
     if var == '+':
-        mcsgpf = './data_files/MCS_Gplus_rs_{:}.csv'.format(int(rs))
+        mcsgpf = rdir + '/data_files/MCS_Gplus_rs_{:}.csv'.format(int(rs))
         if path.isfile(mcsgpf):
             tdat_MCS[rs] = np.genfromtxt(mcsgpf,delimiter=',',skip_header=1)
 
@@ -349,8 +351,8 @@ def manip(rs,var):
 
     plt.show() ; exit()
 
-
-if __name__ == "__main__":
+"""
+def fitparser():
 
     uargs = {'routine': None, 'var': None}
     if len(sys.argv) < 1 + len(uargs.keys()):
@@ -380,4 +382,34 @@ if __name__ == "__main__":
 
     elif uargs['routine'] == 'manip':
 
-        manip(float(uargs['rs']))
+        manip(float(uargs['rs']),uargs['var'])
+
+    return
+"""
+
+def fitparser(routine, var, rs = None):
+
+    if routine == 'main':
+        rs_l = [1.e-6,0.01,0.1,1,2,3,4,5,10,69,100]
+        if var == '+':
+            ips = [-0.00365479, 0.0215642, 0.182898, 4.5, 1.2]
+        elif var == '-':
+            ips = [-0.00456264, 0.0261967, 0.338185, 0.65, 1.8]
+        main_fit(rs_l,ips,var)
+
+    elif routine == 'init':
+        if var == '+':
+            rs_l = [1,2,5,10]
+        elif var == '-':
+            rs_l = [1,2,3,4,5]
+        init_fit(rs_l,var)
+
+    elif routine == 'manip':
+
+        manip(rs,var)
+
+    return
+
+if __name__ == "__main__":
+
+    fitparser('manip','+',1.)

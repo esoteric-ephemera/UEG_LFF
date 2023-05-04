@@ -310,23 +310,17 @@ def gen_dat_files(gpl):
 
     return
 
-def plots(gpl):
+def corr_plots(gpl = ['NEW','COR','RAS','RAD','rMCP07']):
 
     import matplotlib.pyplot as plt
     from matplotlib.ticker import (MultipleLocator, AutoMinorLocator)
 
-    plt.rcParams.update({'text.usetex': True, 'font.family': 'dejavu'})
+    from AKCK_LFF.global_plot_pars import colors, lsls
 
     label_d = {
         'RPA': 'RPA', 'NEW': 'This work', 'COR': 'Corradini $\mathrm{\it et \, al.}$',
         'RAS': 'RA, static', 'RAD': 'RA', 'rMCP07': 'rMCP07',
         'PADE': 'Padé', 'NEWD': 'NEWD'}
-    color_d = {
-        'RPA': 'darkorange', 'NEW': 'darkblue', 'COR': 'darkslategray',
-        'RAS': 'darkred', 'RAD': 'darkred', 'rMCP07': 'tab:orange', 'PADE': 'teal',  'NEWD': 'cyan'}
-
-    style_d = {'RPA': '--', 'NEW': '-', 'COR': '-.',
-        'RAS': '--', 'RAD': ':', 'rMCP07': '-', 'PADE': '--', 'NEWD': '-'}
 
     lim_d = {'NEW': 33. , 'RAS': 38., 'RAD': 38.}
 
@@ -357,8 +351,8 @@ def plots(gpl):
             msk = np.ones(tdat.shape[0],dtype=bool)
         #tfun = (tdat[msk,1]-pw92[msk])*eH_to_eV
         tfun = 100*(1. - tdat[msk,1]/pw92[msk])
-        ax.plot(tdat[msk,0],tfun,color=color_d[gp],label=label_d[gp],\
-            linestyle=style_d[gp])
+        ax.plot(tdat[msk,0],tfun,color=colors[gp],label=label_d[gp],\
+            linestyle=lsls[gp])
         xbds = [min(xbds[0],tdat[:,0].min()),max(xbds[1],tdat[:,0].max() )]
         ybds = [min(ybds[0],tfun.min()),max(ybds[1],tfun.max() )]
 
@@ -405,7 +399,7 @@ if __name__ == "__main__":
 
     #RPA_sanity_check() ; exit()
 
-    plots(['NEW','COR','RAS','RAD','rMCP07'])#['RPA','NEW','COR','RAS','RAD'])
+    corr_plots()
     exit()
     #"""
 

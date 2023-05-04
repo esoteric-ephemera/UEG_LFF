@@ -1,11 +1,12 @@
 import numpy as np
+from os import path
 import matplotlib.pyplot as plt
 from scipy.optimize import least_squares
 
 from AKCK_LFF.corr import get_ec_GK, ec_rpa_unp
 
 def gen_RPA_dat():
-    rsl = [0.1]#[1.,2.,3.,4.,5.,10.,20.,40.,60.,80.,100.,120.]
+    rsl = [1.,2.,3.,4.,5.,10.,20.,40.,60.,80.,100.,120.]
     datl = np.zeros((len(rsl),5))
     uc = 4.0
     qc = 4.0
@@ -57,60 +58,68 @@ def qcut(x,c):
 
     return f
 
-#gen_RPA_dat() ; exit()
+def gen_RPA_cutoffs():
 
-tdat = np.genfromtxt('./ec_data/RPA_cutoffs.csv',delimiter=',',skip_header=1)
+    if not path.isfile('./ec_data/RPA_cutoffs.csv'):
+        gen_RPA_dat()
+    tdat = np.genfromtxt('./ec_data/RPA_cutoffs.csv',delimiter=',',skip_header=1)
 
-freq_cut = lambda x, c : c[0] + c[1]*x**(0.25) + c[2]*x**(0.5)
+    freq_cut = lambda x, c : c[0] + c[1]*x**(0.25) + c[2]*x**(0.5)
 
-def freq_cut(x,c):
+    def freq_cut(x,c):
 
-    bkpt = 40.
-    ff = np.zeros(x.shape)
-    tmsk = x <= bkpt
+        bkpt = 40.
+        ff = np.zeros(x.shape)
+        tmsk = x <= bkpt
 
-    ff[tmsk] = c[0] + c[1]*x[tmsk]**c[2]
+        ff[tmsk] = c[0] + c[1]*x[tmsk]**c[2]
 
-    tmsk = x > bkpt
-    ff[tmsk] = c[0] + c[1]*bkpt**c[2] + (x[tmsk] - bkpt)**c[3]
+        tmsk = x > bkpt
+        ff[tmsk] = c[0] + c[1]*bkpt**c[2] + (x[tmsk] - bkpt)**c[3]
 
-    return ff
+        return ff
 
-fobj = lambda c : freq_cut(tdat[:,0],c) - tdat[:,2]
-fres = least_squares(fobj,np.ones(4))
-print(fres)
-print(*fres.x)
+    fobj = lambda c : freq_cut(tdat[:,0],c) - tdat[:,2]
+    fres = least_squares(fobj,np.ones(4))
+    print(fres)
+    print(*fres.x)
 
-qobj = lambda c : qcut(tdat[:,0],c) - tdat[:,1]
-qres = least_squares(qobj,np.ones(5))
-print(qres)
-print(*qres.x)
+    qobj = lambda c : qcut(tdat[:,0],c) - tdat[:,1]
+    qres = least_squares(qobj,np.ones(5))
+    print(qres)
+    print(*qres.x)
 
-rsl = np.linspace(.1,130.,4000)
+    rsl = np.linspace(.1,130.,4000)
 
-plt.scatter(tdat[:,0],tdat[:,2],color='darkblue')
-plt.plot(rsl,freq_cut(rsl,fres.x),color='darkblue')
-plt.show()
+    plt.scatter(tdat[:,0],tdat[:,2],color='darkblue')
+    plt.plot(rsl,freq_cut(rsl,fres.x),color='darkblue')
+    plt.show()
 
-plt.scatter(tdat[:,0],tdat[:,1],color='darkorange')
-plt.plot(rsl,qcut(rsl,qres.x),color='darkorange')
+    plt.scatter(tdat[:,0],tdat[:,1],color='darkorange')
+    plt.plot(rsl,qcut(rsl,qres.x),color='darkorange')
 
-plt.xscale('log')
-plt.yscale('log')
+    plt.xscale('log')
+    plt.yscale('log')
 
-plt.show()
+    plt.show()
 
-tstr = 'FREQ cut pars:\n'
-for ipar, apar in enumerate(fres.x):
-    lchar = ', '
-    if ipar == len(fres.x)-1:
-        lchar = '\n\n'
-    tstr += '{:.6f}{:}'.format(apar,lchar)
-tstr += 'WVVCTR cut pars:\n'
-for ipar, apar in enumerate(qres.x):
-    lchar = ', '
-    if ipar == len(qres.x)-1:
-        lchar = '\n'
-    tstr += '{:.6f}{:}'.format(apar,lchar)
+    tstr = 'FREQ cut pars:\n'
+    for ipar, apar in enumerate(fres.x):
+        lchar = ', '
+        if ipar == len(fres.x)-1:
+            lchar = '\n\n'
+        tstr += '{:.6f}{:}'.format(apar,lchar)
+    tstr += 'WVVCTR cut pars:\n'
+    for ipar, apar in enumerate(qres.x):
+        lchar = ', '
+        if ipar == len(qres.x)-1:
+            lchar = '\n'
+        tstr += '{:.6f}{:}'.format(apar,lchar)
 
-print(tstr)
+    print(tstr)
+
+    return
+
+if __name__ == "__main__":
+
+    gen_RPA_cutoffs()
