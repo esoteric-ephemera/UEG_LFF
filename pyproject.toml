@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "AKCK_LFF"
-version = "0.0.13"
+version = "1.0.0"
 authors = [
   { name="Aaron Kaplan", email="aaron.kaplan.physics@gmail.com" },
   { name="Carl Kukkonen", email="kukkonen@viaspace.com "},
