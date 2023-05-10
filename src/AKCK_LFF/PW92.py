@@ -16,6 +16,24 @@ def g0_unp_pw92_pade(rs):
     beta = 0.525
     return 0.5*(1 + 2*alpha*rs)/(1 + rs*(beta + rs*alpha*beta))**2
 
+
+def gPW92(rs,v):
+    q0 = -2.0*v[0]*(1.0 + v[1]*rs)
+    rsh = rs**(0.5)
+    q1 = 2.0*v[0]*( rsh* (v[2] + rsh*( v[3] + rsh*( v[4] + rsh*v[5]))) )
+    return q0*np.log(1.0 + 1.0/q1)
+
+def dgPW92(rs,v):
+    q0 = -2.0*v[0]*(1.0 + v[1]*rs)
+    q0p = -2.0*v[0]*v[1]
+
+    rsh = rs**(0.5)
+    q1 = 2.0*v[0]*( rsh* (v[2] + rsh*( v[3] + rsh*( v[4] + rsh*v[5]))) )
+    q1p = v[0]*( v[2]/rsh + 2.*v[3] + rsh*( 3.*v[4] + 4.*rsh*v[5] ) )
+
+    dg = q0p*np.log(1. + 1./q1) - q0*q1p/(q1*(1. + q1))
+    return dg
+
 def ec_pw92(rs,z):
 
     """

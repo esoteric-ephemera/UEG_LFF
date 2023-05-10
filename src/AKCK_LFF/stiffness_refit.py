@@ -6,7 +6,7 @@ from scipy.optimize import least_squares, bisect
 from os import path,system
 
 from AKCK_LFF.PZ81 import chi_enh_pz81
-from AKCK_LFF.PW92 import ec_pw92
+from AKCK_LFF.PW92 import ec_pw92, gPW92, dgPW92
 
 from AKCK_LFF.QMC_data import get_ck_chi_enh, ke_ex
 
@@ -53,23 +53,6 @@ def epsx(rs,z):
     ex0 = -3./(4.*pi)*kf_to_rs/rs
     dx = spinf(z,4./3.)
     return ex0*dx
-
-def gPW92(rs,v):
-    q0 = -2.0*v[0]*(1.0 + v[1]*rs)
-    rsh = rs**(0.5)
-    q1 = 2.0*v[0]*( rsh* (v[2] + rsh*( v[3] + rsh*( v[4] + rsh*v[5]))) )
-    return q0*np.log(1.0 + 1.0/q1)
-
-def dgPW92(rs,v):
-    q0 = -2.0*v[0]*(1.0 + v[1]*rs)
-    q0p = -2.0*v[0]*v[1]
-
-    rsh = rs**(0.5)
-    q1 = 2.0*v[0]*( rsh* (v[2] + rsh*( v[3] + rsh*( v[4] + rsh*v[5]))) )
-    q1p = v[0]*( v[2]/rsh + 2.*v[3] + rsh*( 3.*v[4] + 4.*rsh*v[5] ) )
-
-    dg = q0p*np.log(1. + 1./q1) - q0*q1p/(q1*(1. + q1))
-    return dg
 
 def epsc_PW92_rev(rs,z,ps):
 

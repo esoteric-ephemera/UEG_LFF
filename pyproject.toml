@@ -1,10 +1,10 @@
 [build-system]
-requires = ["hatchling","numpy","matplotlib","scipy"]
-build-backend = "hatchling.build"
+requires = ["numpy","matplotlib","scipy","setuptools"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "AKCK_LFF"
-version = "0.0.11"
+version = "0.0.13"
 authors = [
   { name="Aaron Kaplan", email="aaron.kaplan.physics@gmail.com" },
   { name="Carl Kukkonen", email="kukkonen@viaspace.com "},
@@ -17,7 +17,12 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 license = { file = "LICENSE" }
+#dynamic = ["version","readme"]
 
 [project.urls]
 "Homepage" = "https://github.com/esoteric-ephemera/UEG_LFF"
 "Bug Tracker" = "https://github.com/esoteric-ephemera/UEG_LFF/issues"
+
+#[tool.setuptools.dynamic]
+#version = {attr = "AKCK_LFF.VERSION"}
+#readme = {file = "README.md"}

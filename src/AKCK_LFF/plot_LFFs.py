@@ -157,7 +157,7 @@ def gplus_plots():
     return
 
 
-def gminus_plots():
+def gminus_plots(acpars='PW92'):
 
     xl = np.linspace(0.0,4.0,5000)
     xlp = xl[1:]
@@ -177,7 +177,7 @@ def gminus_plots():
         kf = rs_to_kf/rs
         kf2 = kf*kf
         kl2 = xlp**2#(xlp*kf)**2
-        a,b,c = get_g_minus_pars(rs,0.)
+        a,b,c = get_g_minus_pars(rs,acpars=acpars)
 
         if got_QMC_dat:
             tq = tdat[:,0]#*kf
@@ -199,10 +199,10 @@ def gminus_plots():
         ax[1].plot(xlp,4.*pi*(c + b/kl2), color=colors['LQE'],\
             linestyle=lsls['LQE'], label='LQE')
 
-        gmapp = g_minus_new(xl*kf,rs)
+        gmapp = g_minus_new(xl*kf,rs,acpars=acpars)
         ax[0].plot(xl,gmapp,color=colors['NEW'], label='This work',\
             linestyle = lsls['NEW'])
-        gmapp_oq2 = 4.*pi*g_minus_new(xlp*kf,rs)/kl2
+        gmapp_oq2 = 4.*pi*g_minus_new(xlp*kf,rs,acpars=acpars)/kl2
         ax[1].plot(xlp,gmapp_oq2,color=colors['NEW'], label='This work',\
             linestyle = lsls['NEW'])
 
@@ -245,7 +245,10 @@ def gminus_plots():
         ax[1].annotate('(b)',tcoord,fontsize=16,xycoords='axes fraction')
 
         #plt.show() ; exit()
-        plt.savefig('./figs/gminus_rs_{:}_2p.pdf'.format(rs), dpi=600,\
+        lstr = ''
+        if acpars == 'AKCK':
+            lstr = '_AKCK_ac'
+        plt.savefig('./figs/gminus_rs_{:}_2p{:}.pdf'.format(rs,lstr), dpi=600,\
             bbox_inches='tight')
         plt.cla()
         plt.clf()

@@ -11,7 +11,7 @@ def smooth_step(x,a,b):
     f = (f1 - 1.)*f2/(1. + (f1 - 2.)*f2)
     return f
 
-def simple_LFF(q,rs,c,var):
+def simple_LFF(q,rs,c,var,acpars='PW92'):
 
     kf = rs_to_kf/rs
     q2 = (q/kf)**2
@@ -20,7 +20,7 @@ def simple_LFF(q,rs,c,var):
     if var == '+':
         CA, CB, CC = get_g_plus_pars(rs)
     elif var == '-':
-        CA, CB, CC = get_g_minus_pars(rs,0.)
+        CA, CB, CC = get_g_minus_pars(rs,acpars=acpars)
 
     alpha = c[0] + c[1]*np.exp(-abs(c[2])*rs)
 
@@ -36,9 +36,14 @@ def g_plus_new(q,rs):
     cps = [-0.00451760, 0.0155766, 0.422624, 3.516054, 1.015830]
     return simple_LFF(q,rs,cps,'+')
 
-def g_minus_new(q,rs):
-    cms = [-0.00105483, 0.0157086, 0.345319, 2.850094, 0.935840]
-    return simple_LFF(q,rs,cms,'-')
+def g_minus_new(q,rs,acpars='PW92'):
+    
+    if acpars == 'PW92':
+        cms = [-0.00105483, 0.0157086, 0.345319, 2.850094, 0.935840]
+    elif acpars == 'AKCK':
+        cms = [-0.000519869, 0.0153111, 0.356524, 2.824663, 0.927550]
+
+    return simple_LFF(q,rs,cms,'-',acpars=acpars)
 
 def g_plus_dlda(q,u,rs):
     from AKCK_LFF.alda import lda_derivs

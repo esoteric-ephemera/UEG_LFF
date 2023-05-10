@@ -1,6 +1,6 @@
 import numpy as np
 
-from AKCK_LFF.PW92 import g0_unp_pw92_pade, ec_pw92
+from AKCK_LFF.PW92 import g0_unp_pw92_pade, ec_pw92, gPW92
 from AKCK_LFF.alda import alda
 
 pi = np.pi
@@ -46,24 +46,17 @@ def get_g_plus_pars(rs):
     return Apos, Bpos(rs), C
 
 
-def get_g_minus_pars(rs,z):
-
-    # Eq. 2.59 and Table 2.1 of Quantum Theory of Electron Liquid
-    rss3 = pi*rs_to_kf
+def get_g_minus_pars(rs,acpars='PW92'):
 
     kf = rs_to_kf/rs
 
-    ef = kf**2/2.
-    # square of Thomas-Fermi screening wavevector
-    ks2 = 4*kf/pi
+    ec, d_ec_drs, d_ec_drs2, d_ec_dz2 = ec_pw92(rs,0.)
+    if acpars == 'PW92':
+        ac = d_ec_dz2
+    elif acpars == 'AKCK':
+        ac = rev_alpha_c(rs)
 
-    ec, d_ec_drs, d_ec_drs2, d_ec_dz2 = ec_pw92(rs,z)
-    # Eq. 5.113
-    one_m_chi = rs/rss3 - 3.*d_ec_dz2/(2*ef)
-    # Eq. 5.167
-    gm0 = one_m_chi/ks2
-
-    Amin = kf**2 * gm0
+    Amin = (1. - 3.*pi*ac/kf)/4.
 
     # Table 5.1
     Bmin = Bpos(rs) + 2*g0_unp_pw92_pade(rs) - 1.
@@ -72,6 +65,11 @@ def get_g_minus_pars(rs,z):
     C = -pi*d_rs_ec_drs/(2.*kf)
 
     return Amin, Bmin, C
+
+def rev_alpha_c(rs):
+    # current model of alpha_c(rs)
+    nps = [0.016886864, 0.086888870 , 10.357564711, 3.623216709, 0.439233491, 0.411840739]
+    return -gPW92(rs,nps)
 
 def chi_enh(rs):
 
